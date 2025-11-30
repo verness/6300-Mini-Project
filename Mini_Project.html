@@ -1,0 +1,1992 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Verness Chin">
+
+<title>Mini Project – Mini Project: Flight Delays</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-c1fac2584b48ed01fb6e278e36375074.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Mini Project: Flight Delays</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./Mini_Project.html" aria-current="page"> 
+<span class="menu-text">Report</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#mini-project-analyzing-flight-delays-across-airlines" id="toc-mini-project-analyzing-flight-delays-across-airlines" class="nav-link active" data-scroll-target="#mini-project-analyzing-flight-delays-across-airlines">Mini Project: Analyzing Flight Delays Across Airlines</a>
+  <ul class="collapse">
+  <li><a href="#load-the-datasets" id="toc-load-the-datasets" class="nav-link" data-scroll-target="#load-the-datasets">Load the datasets</a></li>
+  <li><a href="#story-maximum-flight-delays-across-airlines" id="toc-story-maximum-flight-delays-across-airlines" class="nav-link" data-scroll-target="#story-maximum-flight-delays-across-airlines">Story: Maximum Flight Delays Across Airlines</a></li>
+  <li><a href="#the-horizontal-bar-chart-shows-a-clear-contrast-across-airlines" id="toc-the-horizontal-bar-chart-shows-a-clear-contrast-across-airlines" class="nav-link" data-scroll-target="#the-horizontal-bar-chart-shows-a-clear-contrast-across-airlines">The horizontal bar chart shows a clear contrast across airlines:</a>
+  <ul class="collapse">
+  <li><a href="#why-this-matters" id="toc-why-this-matters" class="nav-link" data-scroll-target="#why-this-matters">Why this matters:</a></li>
+  </ul></li>
+  <li><a href="#for-travelers" id="toc-for-travelers" class="nav-link" data-scroll-target="#for-travelers">For Travelers</a></li>
+  <li><a href="#for-airlines-policy-makers" id="toc-for-airlines-policy-makers" class="nav-link" data-scroll-target="#for-airlines-policy-makers">For Airlines &amp; Policy Makers</a></li>
+  <li><a href="#story-maximum-early-flight-depatures-across-airlines" id="toc-story-maximum-early-flight-depatures-across-airlines" class="nav-link" data-scroll-target="#story-maximum-early-flight-depatures-across-airlines">Story: Maximum Early Flight Depatures Across Airlines</a>
+  <ul class="collapse">
+  <li><a href="#why-these-findings-matter" id="toc-why-these-findings-matter" class="nav-link" data-scroll-target="#why-these-findings-matter">Why These Findings Matter</a></li>
+  </ul></li>
+  <li><a href="#for-passengers" id="toc-for-passengers" class="nav-link" data-scroll-target="#for-passengers">For passengers</a></li>
+  <li><a href="#for-operations-analysts" id="toc-for-operations-analysts" class="nav-link" data-scroll-target="#for-operations-analysts">For operations analysts</a></li>
+  <li><a href="#for-scheduling-and-policy" id="toc-for-scheduling-and-policy" class="nav-link" data-scroll-target="#for-scheduling-and-policy">For scheduling and policy</a></li>
+  <li><a href="#story-ranking-the-busiest-days-of-the-week" id="toc-story-ranking-the-busiest-days-of-the-week" class="nav-link" data-scroll-target="#story-ranking-the-busiest-days-of-the-week">Story: Ranking the Busiest Days of the Week</a>
+  <ul class="collapse">
+  <li><a href="#why-these-findings-matter-1" id="toc-why-these-findings-matter-1" class="nav-link" data-scroll-target="#why-these-findings-matter-1">Why These Findings Matter</a></li>
+  </ul></li>
+  <li><a href="#for-passengers-1" id="toc-for-passengers-1" class="nav-link" data-scroll-target="#for-passengers-1">For passengers</a></li>
+  <li><a href="#for-airlines-and-airports" id="toc-for-airlines-and-airports" class="nav-link" data-scroll-target="#for-airlines-and-airports">For airlines and airports</a></li>
+  <li><a href="#for-performance-analysis" id="toc-for-performance-analysis" class="nav-link" data-scroll-target="#for-performance-analysis">For performance analysis</a></li>
+  <li><a href="#story-airport-with-the-highest-average-departure-delay" id="toc-story-airport-with-the-highest-average-departure-delay" class="nav-link" data-scroll-target="#story-airport-with-the-highest-average-departure-delay">Story: Airport With the Highest Average Departure Delay</a>
+  <ul class="collapse">
+  <li><a href="#why-this-finding-matters" id="toc-why-this-finding-matters" class="nav-link" data-scroll-target="#why-this-finding-matters">Why This Finding Matters</a></li>
+  </ul></li>
+  <li><a href="#for-airport-operations-and-management" id="toc-for-airport-operations-and-management" class="nav-link" data-scroll-target="#for-airport-operations-and-management">For Airport Operations and Management</a></li>
+  <li><a href="#for-airlines-serving-smx" id="toc-for-airlines-serving-smx" class="nav-link" data-scroll-target="#for-airlines-serving-smx">For Airlines Serving SMX</a></li>
+  <li><a href="#for-passengers-2" id="toc-for-passengers-2" class="nav-link" data-scroll-target="#for-passengers-2">For Passengers</a></li>
+  <li><a href="#for-policy-and-infrastructure-planning" id="toc-for-policy-and-infrastructure-planning" class="nav-link" data-scroll-target="#for-policy-and-infrastructure-planning">For Policy and Infrastructure Planning</a>
+  <ul class="collapse">
+  <li><a href="#story-airline-specific-airports-with-the-highest-average-departure-delay" id="toc-story-airline-specific-airports-with-the-highest-average-departure-delay" class="nav-link" data-scroll-target="#story-airline-specific-airports-with-the-highest-average-departure-delay">Story: Airline-Specific Airports with the Highest Average Departure Delay</a></li>
+  <li><a href="#why-these-findings-matter-2" id="toc-why-these-findings-matter-2" class="nav-link" data-scroll-target="#why-these-findings-matter-2">Why These Findings Matter</a></li>
+  </ul></li>
+  <li><a href="#for-airlines" id="toc-for-airlines" class="nav-link" data-scroll-target="#for-airlines">For Airlines</a></li>
+  <li><a href="#for-airports-and-regulators" id="toc-for-airports-and-regulators" class="nav-link" data-scroll-target="#for-airports-and-regulators">For Airports and Regulators</a></li>
+  <li><a href="#for-passengers-3" id="toc-for-passengers-3" class="nav-link" data-scroll-target="#for-passengers-3">For Passengers</a></li>
+  <li><a href="#story-flight-cancelation-reasons-for-each-departure-airport" id="toc-story-flight-cancelation-reasons-for-each-departure-airport" class="nav-link" data-scroll-target="#story-flight-cancelation-reasons-for-each-departure-airport">Story: Flight Cancelation Reasons for Each Departure Airport</a></li>
+  <li><a href="#top-10-most-cancellation-prone-airports" id="toc-top-10-most-cancellation-prone-airports" class="nav-link" data-scroll-target="#top-10-most-cancellation-prone-airports">Top 10 most cancellation-prone airports</a>
+  <ul class="collapse">
+  <li><a href="#why-these-findings-matter-3" id="toc-why-these-findings-matter-3" class="nav-link" data-scroll-target="#why-these-findings-matter-3">Why These Findings Matter</a></li>
+  </ul></li>
+  <li><a href="#for-airlines-1" id="toc-for-airlines-1" class="nav-link" data-scroll-target="#for-airlines-1">For Airlines</a></li>
+  <li><a href="#for-airports" id="toc-for-airports" class="nav-link" data-scroll-target="#for-airports">For Airports</a></li>
+  <li><a href="#for-passengers-4" id="toc-for-passengers-4" class="nav-link" data-scroll-target="#for-passengers-4">For Passengers</a>
+  <ul class="collapse">
+  <li><a href="#story-average-number-of-flights-over-preceding-3-days" id="toc-story-average-number-of-flights-over-preceding-3-days" class="nav-link" data-scroll-target="#story-average-number-of-flights-over-preceding-3-days">Story: Average Number of Flights Over Preceding 3 Days</a></li>
+  <li><a href="#why-these-findings-matter-4" id="toc-why-these-findings-matter-4" class="nav-link" data-scroll-target="#why-these-findings-matter-4">Why These Findings Matter</a></li>
+  </ul></li>
+  <li><a href="#for-airlines-2" id="toc-for-airlines-2" class="nav-link" data-scroll-target="#for-airlines-2">For Airlines</a></li>
+  <li><a href="#for-passengers-5" id="toc-for-passengers-5" class="nav-link" data-scroll-target="#for-passengers-5">For Passengers</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Mini Project</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Verness Chin </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="mini-project-analyzing-flight-delays-across-airlines" class="level1">
+<h1>Mini Project: Analyzing Flight Delays Across Airlines</h1>
+<p>The data set is from the Airline On-Time Statistics and Delay Causes data set,published by the United States Department of Transportation at: http://www.transtats.bts.gov/. The data set was downloaded under the “Reporting Carrier On-Time Performance on September 2024”.</p>
+<section id="load-the-datasets" class="level3">
+<h3 class="anchored" data-anchor-id="load-the-datasets">Load the datasets</h3>
+<div id="275812b2" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> textwrap</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>task1_df <span class="op">=</span> pd.read_csv(<span class="st">"./data/Yiting_Chin_yc1348_project_task1_results.csv"</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>task2_df <span class="op">=</span> pd.read_csv(<span class="st">"./data/Yiting_Chin_yc1348_project_task2_results.csv"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>task3_df <span class="op">=</span> pd.read_csv(<span class="st">"./data/Yiting_Chin_yc1348_project_task3_results.csv"</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>task4_df <span class="op">=</span> pd.read_csv(<span class="st">"./data/Yiting_Chin_yc1348_project_task4_results.csv"</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>task5_df <span class="op">=</span> pd.read_csv(<span class="st">"./data/Yiting_Chin_yc1348_project_task5_results.csv"</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>task6a_df <span class="op">=</span> pd.read_csv(<span class="st">"./data/Yiting_Chin_yc1348_project_task6a_results.csv"</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>task6b_df <span class="op">=</span> pd.read_csv(<span class="st">"./data/Yiting_Chin_yc1348_project_task6b_results.csv"</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>task7_df <span class="op">=</span> pd.read_csv(<span class="st">"./data/Yiting_Chin_yc1348_project_task7_results.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="story-maximum-flight-delays-across-airlines" class="level2">
+<h2 class="anchored" data-anchor-id="story-maximum-flight-delays-across-airlines">Story: Maximum Flight Delays Across Airlines</h2>
+<p>Understanding how airlines perform in terms of extreme delays would offer customers valuable insight into potential travel disruptions, and overall travel experience. By analyzing the maximum departure delay for each carrier, we can uncover patterns that help travelers and analysts identify which airlines may pose higher disruption risks.</p>
+<p><strong>Task 1:</strong> Find maximal departure delay in minutes for each airline. Sort results from smallest to largest maximum delay. Output airline names and values of the delay.</p>
+<div id="0086a6f9" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the DataFrame for Task 1</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>task1_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Airline_Name</th>
+<th data-quarto-table-cell-role="th">Max_Delay</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Southwest Airlines Co.: WN</td>
+<td>601</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Alaska Airlines Inc.: AS</td>
+<td>869</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Hawaiian Airlines Inc.: HA</td>
+<td>1005</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Spirit Air Lines: NK</td>
+<td>1061</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Envoy Air: MQ</td>
+<td>1078</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>Delta Air Lines Inc.: DL</td>
+<td>1130</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6</td>
+<td>Endeavor Air Inc.: 9E</td>
+<td>1132</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">7</td>
+<td>Republic Airline: YX</td>
+<td>1178</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">8</td>
+<td>Allegiant Air: G4</td>
+<td>1263</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">9</td>
+<td>Frontier Airlines Inc.: F9</td>
+<td>1296</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10</td>
+<td>SkyWest Airlines Inc.: OO</td>
+<td>1394</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">11</td>
+<td>United Air Lines Inc.: UA</td>
+<td>1498</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">12</td>
+<td>PSA Airlines Inc.: OH</td>
+<td>2131</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">13</td>
+<td>JetBlue Airways: B6</td>
+<td>2521</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">14</td>
+<td>American Airlines Inc.: AA</td>
+<td>3130</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="c0ce840d" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot task 1 results with histogram</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">6</span>))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>plt.bar(task1_df[<span class="st">'Airline_Name'</span>], task1_df[<span class="st">'Max_Delay'</span>], color<span class="op">=</span><span class="st">'skyblue'</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Airline'</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Max Departure Delay (minutes)'</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Max Departure Delay by Airline'</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Mini_Project_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="the-horizontal-bar-chart-shows-a-clear-contrast-across-airlines" class="level2">
+<h2 class="anchored" data-anchor-id="the-horizontal-bar-chart-shows-a-clear-contrast-across-airlines">The horizontal bar chart shows a clear contrast across airlines:</h2>
+<p>The distribution of maximum departure delays shows a clear separation between airlines with moderate delays and those experiencing severe disruptions. Southwest, Alaska, Hawaiian, and Spirit exhibit the lowest maximum delays in the dataset, with values ranging from approximately 600 minutes to just over 1,060 minutes (10 to 17 hours). These delays are still substantial, but they remain within a half-day window.</p>
+<p>In contrast, American Airlines, JetBlue, and PSA Airlines show extremely high maximum delays. PSA Airlines reaches 2,131 minutes, JetBlue exceeds 2,500 minutes, and American Airlines shows the highest recorded delay at 3,130 minutes.Converting to hours, these delays range from 35 hours to over 50 hours, which is more than two full days of delay. A delay of this magnitude, indicating severe operational disruptions that would significantly impact passengers’ travel plans.</p>
+<p><strong>Key Insight</strong>: The difference between the lowest and highest maximum delays spans more than two days, showing that certain airlines experience rare but massive operational disruptions.</p>
+<div id="fcec8984" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">6</span>))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df_sorted <span class="op">=</span> task1_df.sort_values(<span class="st">'Max_Delay'</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="bu">range</span>(<span class="bu">len</span>(df_sorted))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>plt.hlines(y, <span class="dv">0</span>, df_sorted[<span class="st">'Max_Delay'</span>])</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>plt.plot(df_sorted[<span class="st">'Max_Delay'</span>], y, <span class="st">'o'</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>plt.yticks(y, df_sorted[<span class="st">'Airline_Name'</span>])</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Max Delay (minutes)'</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Maximum Flight Delay by Airline'</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Mini_Project_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The lollipop chart makes the outliers even more visible. The lengths of the lines highlight: - American Airlines (AA) is a major outlier with the longest delay over 3,100 minutes. - JetBlue (B6) follows with a delay over 2,500 minutes. - PSA Airlines (OH) also shows an unusually high extreme delay.</p>
+<section id="why-this-matters" class="level3">
+<h3 class="anchored" data-anchor-id="why-this-matters">Why this matters:</h3>
+<p>Outliers indicate airlines that had at least one severe system-wide disruption—such as weather shutdowns, staffing problems, ground halts, or logistical failures. Even if rare, these events significantly affect large numbers of passengers.</p>
+</section>
+</section>
+<section id="for-travelers" class="level2">
+<h2 class="anchored" data-anchor-id="for-travelers">For Travelers</h2>
+<p>Extreme delays represent the worst-case scenarios for travelers. A delay of 3,000 minutes—equivalent to roughly 50 hours—is far more than a simple inconvenience. It can lead to missed connections, force passengers to secure unexpected overnight accommodations, and ultimately cause complete disruptions to their planned itineraries. Such delays not only affect the immediate flight but can cascade into significant logistical and financial burdens for travelers.</p>
+<p>Knowing which airlines have historically seen such outliers helps travelers manage risk or choose more resilient carriers.</p>
+</section>
+<section id="for-airlines-policy-makers" class="level2">
+<h2 class="anchored" data-anchor-id="for-airlines-policy-makers">For Airlines &amp; Policy Makers</h2>
+<p>Identifying which airlines experience major operational breakdowns offers a clearer view of how their systems behave under stress. With this information, airlines can make more informed decisions about staffing, making sure that crews and support teams are properly positioned during high-pressure periods. It also allows schedulers to anticipate vulnerable points in the network and adjust flight timing or aircraft assignments before problems escalate. Beyond day-to-day operations, understanding these breakdowns helps strengthen contingency plans, giving airlines a better chance of containing disruptions rather than allowing them to ripple through the system and weaken the entire network.</p>
+</section>
+<section id="story-maximum-early-flight-depatures-across-airlines" class="level2">
+<h2 class="anchored" data-anchor-id="story-maximum-early-flight-depatures-across-airlines">Story: Maximum Early Flight Depatures Across Airlines</h2>
+<p>Early departures are an important but often overlooked aspect of airline performance. Delays tends to receive more attention, consistently departing ahead of schedule early reflects an airline’s ability to manage boarding processes, coordinate turnaround operations, and maintain schedule adherence. By identifying which airlines consistently achieve early departures, stakeholders can better understand operational efficiency and customer satisfaction.</p>
+<p><strong>Task 2:</strong> Find maximal early departures in minutes for each airline. Sort results from largest to smallest. Output airline names.</p>
+<div id="e8ca1dcb" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the DataFrame for Task 2</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>task2_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Airline_Name</th>
+<th data-quarto-table-cell-role="th">Max_Early_Dep</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Allegiant Air: G4</td>
+<td>-43</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Alaska Airlines Inc.: AS</td>
+<td>-40</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>United Air Lines Inc.: UA</td>
+<td>-39</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>SkyWest Airlines Inc.: OO</td>
+<td>-37</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Delta Air Lines Inc.: DL</td>
+<td>-37</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>Endeavor Air Inc.: 9E</td>
+<td>-34</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6</td>
+<td>Frontier Airlines Inc.: F9</td>
+<td>-33</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">7</td>
+<td>Envoy Air: MQ</td>
+<td>-32</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">8</td>
+<td>American Airlines Inc.: AA</td>
+<td>-31</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">9</td>
+<td>JetBlue Airways: B6</td>
+<td>-31</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10</td>
+<td>Spirit Air Lines: NK</td>
+<td>-30</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">11</td>
+<td>PSA Airlines Inc.: OH</td>
+<td>-27</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">12</td>
+<td>Republic Airline: YX</td>
+<td>-24</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">13</td>
+<td>Hawaiian Airlines Inc.: HA</td>
+<td>-21</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">14</td>
+<td>Southwest Airlines Co.: WN</td>
+<td>-17</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>The maximum early departure times for each airline are shown as negative values, since a negative departure delay represents leaving ahead of schedule. However, negative bars can make interpretation less intuitive for general audiences. To allow for cleaner comparisons across airlines, I will convert these early departure values into positive minutes early.</p>
+<p>This transformation does not change the meaning of the data, it simply flips the sign to make the visualization easier to interpret. I have sorted the results from largest to smallest maximum early departure times.</p>
+<div id="cccc04f4" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot task 2 results with histogram</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>task2_df[<span class="st">'Max_Early_Dep'</span>] <span class="op">=</span> task2_df[<span class="st">'Max_Early_Dep'</span>].<span class="bu">abs</span>()</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>,<span class="dv">6</span>))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>plt.barh(task2_df[<span class="st">'Airline_Name'</span>], task2_df[<span class="st">'Max_Early_Dep'</span>], color<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>plt.axvline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">'gray'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Airline'</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Max Early Departure (minutes)'</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Maximum Early Departure by Airline'</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>plt.grid(axis<span class="op">=</span><span class="st">'x'</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># add value labels on bars</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index, value <span class="kw">in</span> <span class="bu">enumerate</span>(task2_df[<span class="st">'Max_Early_Dep'</span>]):</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    plt.text(value <span class="op">+</span> <span class="dv">1</span>, index, <span class="bu">str</span>(value))</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Mini_Project_files/figure-html/cell-7-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Key Insight</strong>:</p>
+<p>According to the histogram, Allegiant Air (G4) stands out with the earliest departure at 43 minutes. Follow by Alaske Airlines (AS) with 40 minutes and United Air Lines (UA) with 39 minutes. This unusual early departure of around 40 minutes suggests either exceptionally fast turnaround or specific route-level operational decisions.</p>
+<p>Multiple airlines consistently depart more than 30 minutes ahead of schedule. Delta (DL), Endeavor (9E), JetBlue (B6), American Airlines (AA), and a couple other airlines all show early departures between 30 and 36 minutes. This pattern points toward consistent internal efficiency rather than isolated operational anomalies, indicating that these carriers may excel in coordinating boarding, ground handling, and aircraft readiness.</p>
+<p>In contrast, the mid-size carriers and regional carriers tend to show more moderate early-departure behavior. Republic (YX), Hawaiian (HA), and PSA Airlines (OH) typically fall between 21 and 27 minutes early. Their behavior likely reflects the operational constraints of regional or mid-size service, where schedules are closely tied to mainline connections and gate assignments, leaving less room for departures that are significantly ahead of schedule.</p>
+<p>Southwest Airlines (WN), despite being one of the largest mainline carriers in the United States, records the lowest maximum early-departure time among all airlines in the dataset. Its earliest departure is only 17 minutes ahead of schedule, noticeably lower than both mid-size mainline carriers and even some regional operators. This restrained early-departure behavior suggests a deliberate operational philosophy of Southwest, prioritizing schedule consistency and passenger predictability over aggressively pushing flights out early. Given its high passenger volumes, rapid aircraft turnover, and tightly packed gate schedules, maintaining a narrower early-departure window may also help ensure smoother boarding processes and reduce the risk of leaving passengers behind.</p>
+<section id="why-these-findings-matter" class="level3">
+<h3 class="anchored" data-anchor-id="why-these-findings-matter">Why These Findings Matter</h3>
+</section>
+</section>
+<section id="for-passengers" class="level2">
+<h2 class="anchored" data-anchor-id="for-passengers">For passengers</h2>
+<p>Early departures affect punctuality just like delays:</p>
+<p>A flight leaving 30+ minutes early can cause passengers to miss their flight if they arrive “on time.” Travelers on airlines with consistently large early departures may need to adjust airport arrival habits. Early departures influence punctuality just as significantly as delays. When a flight leaves more than 30 minutes early, even travelers who arrive at the airport on time risk missing their flight. On airlines that consistently depart well ahead of schedule, passengers may need to adjust their arrival habits simply to avoid being left behind. This adds uncertainty to the travel experience and can undermine the trustworthiness of published schedules.</p>
+</section>
+<section id="for-operations-analysts" class="level2">
+<h2 class="anchored" data-anchor-id="for-operations-analysts">For operations analysts</h2>
+<p>Early departures indicate the efficiency of day-to-day airline processes. When flights consistently push back ahead of schedule, it often signals strong gate management, rapid aircraft turnaround, and effective coordination among crews. It can also occur during periods when the airport environment is less congested, meaning when fewer aircraft are pushing back, taxiing, or taking off at the same time. In these quieter windows, ground staff, gates, and runways face lesser pressure, allowing tasks like boarding, baggage loading, fueling, and safety checks to be completed more quickly. With fewer bottlenecks on the ramp , flights can depart earlier simply because the operational environment is smoother. In some cases, airlines may also be using this operational slack strategically to maintain schedule stability and prevent delays from accumulating later in the day.</p>
+</section>
+<section id="for-scheduling-and-policy" class="level2">
+<h2 class="anchored" data-anchor-id="for-scheduling-and-policy">For scheduling and policy</h2>
+<p>Departing significantly ahead of the published time creates a disconnect between what the passengers expected and the airline’s actual operations. It can also unintentionally inflate an airline’s performance metrics, since leaving early reduces the likelihood of being recorded as “delayed,” even when the schedule itself isn’t being followed. This raises important fairness concerns for travelers who plan their airport arrival around the published departure time and may miss their flight despite arriving on time. Because of these issues, regulators and airport authorities should keep a close watch on early departures to ensure that schedule padding is not used inappropriately and that airlines follows the scheduled departure in a way that is transparent and fair to passengers.</p>
+</section>
+<section id="story-ranking-the-busiest-days-of-the-week" class="level2">
+<h2 class="anchored" data-anchor-id="story-ranking-the-busiest-days-of-the-week">Story: Ranking the Busiest Days of the Week</h2>
+<p>Understanding which days of the week have the highest flight volume provides insight into airline scheduling strategies, airport congestion patterns, and customer travel behavior. By ranking days from busiest to least busy, we could establish the operational pressure points that affect delays, staffing needs, and passenger experience.</p>
+<p><strong>Task 3:</strong> Rank days of the week by the number of flights performed by all airlines on that day (1 is the busiest). Output the day of the week names, number of flights and ranks in the rank increasing order.</p>
+<div id="3da933c5" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the DataFrame for Task 3</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>task3_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Day</th>
+<th data-quarto-table-cell-role="th">Num_Flights</th>
+<th data-quarto-table-cell-role="th">Day_Rank</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Monday</td>
+<td>103737</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Sunday</td>
+<td>101771</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Thursday</td>
+<td>82746</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Friday</td>
+<td>82581</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Tuesday</td>
+<td>72214</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>Wednesday</td>
+<td>72186</td>
+<td>6</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6</td>
+<td>Saturday</td>
+<td>67387</td>
+<td>7</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="7513cb86" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot task 3 results with seaborn</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">"whitegrid"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">4</span>))</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.barplot(</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>task3_df,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"Day"</span>,              </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"Num_Flights"</span>, </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    hue<span class="op">=</span><span class="st">"Day_Rank"</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    palette<span class="op">=</span><span class="st">"viridis"</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    dodge<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    orient<span class="op">=</span><span class="st">"h"</span>,</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># title &amp; labels</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Busiest Days of the Week by Number of Flights"</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Number of Flights"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Day of Week"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>sns.despine(left<span class="op">=</span><span class="va">True</span>, bottom<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>ax.ticklabel_format(style<span class="op">=</span><span class="st">"plain"</span>, axis<span class="op">=</span><span class="st">"x"</span>) </span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co"># add value labels on bars</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> p <span class="kw">in</span> ax.patches:</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    width <span class="op">=</span> p.get_width()</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    ax.text(</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        width <span class="op">+</span> <span class="dv">1500</span>,                </span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        p.get_y() <span class="op">+</span> p.get_height()<span class="op">/</span><span class="dv">2</span>,</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span><span class="bu">int</span>(width)<span class="sc">:,}</span><span class="ss">"</span>,   </span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>        va<span class="op">=</span><span class="st">"center"</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Mini_Project_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Key Insight</strong>: Monday emerges as the busiest day of the week. With over 103,700 flights, Monday stands out as the peak day for air travel. This reflects heavy business-travel demand at the start of the workweek, and the repositioning of aircraft after the weekend.</p>
+<p>Sunday is nearly as busy as Monday. Sunday’s high volume, carrying nearly 101,700 flights, highlights strong weekend travel demand as travelers return home before the upcoming workweek. This combination makes Sunday and Monday the most congested 48-hour window in the entire week.</p>
+<p>A secondary peak appears late in the week during Thursday and Friday. Both days each exceeding 82,000 flights. This indicates that with increased corporate travel as the workweek winds down and the early movement of leisure travelers beginning their weekend trips. Together, these two days reveal the rhythm of business and leisure travel converging toward week’s end.</p>
+<p>In contrast, mid-week days experience noticeably lower flight volumes. Tuesday with 72,214 flights and Wednesday with 72,186 show reduced activity. These are the least congested weekdays. These quieter periods often bring lower fares, fewer delays, and smoother airport operations, benefiting travelers who prefer to avoid congestion.</p>
+<p>Saturday stands out as the least busy day of the week, with roughly 67,400 flights. This is consistent with the drop in business travel and the more dispersed timing of leisure departures. It is also a day that provides airlines with an opportunity to conduct routine maintenance or run reduced schedules, allowing them to match capacity more closely to the slower demand while preparing aircraft for the busier days ahead.</p>
+<p>Overall, the pattern across the week reflects a predictable interplay between business schedules, leisure travel habits, and operational strategies that shape the aviation system’s weekly pulse.</p>
+<section id="why-these-findings-matter-1" class="level3">
+<h3 class="anchored" data-anchor-id="why-these-findings-matter-1">Why These Findings Matter</h3>
+</section>
+</section>
+<section id="for-passengers-1" class="level2">
+<h2 class="anchored" data-anchor-id="for-passengers-1">For passengers</h2>
+<p>Understanding weekly congestion patterns helps travelers to choose flights on days that are typically less delayed, more affordable, and easier to navigate at the airport. Mid-week flights, particularly on Tuesday and Wednesday, tend to offer the most reliable travel experience and the lowest likelihood of disruption, making them ideal for travelers who prioritize punctuality.</p>
+</section>
+<section id="for-airlines-and-airports" class="level2">
+<h2 class="anchored" data-anchor-id="for-airlines-and-airports">For airlines and airports</h2>
+<p>Knowing patterns of flight volume allows airlines and airports to allocate resources more effectively. High-traffic days requires additional gate availability, more staffing, and tighter coordination across departures and arrivals to prevent crowding on taxiways and in terminals. Recognizing the peaks on Sunday–Monday and Thursday–Friday enables better resource allocation, which would help reduce bottlenecks</p>
+</section>
+<section id="for-performance-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="for-performance-analysis">For performance analysis</h2>
+<p>When evaluating delay metrics or operational efficiency, it is critical to account for weekly flight volume differences as delay statistics look very different when a day handles 100,000 flights versus 70,000. Comparing delays on Monday to delays on Wednesday without considering traffic volume would produce misleading conclusions. This added pressure increases the likelihood of delays simply because there are more aircraft competing for the same resources. By including flight volume in the analysis, we get a more accurate picture of how efficiently the system is operating relative to its workload. This context also helps identify whether delays stem from operational issues or from unavoidable congestion tied to the weekly traffic cycle.</p>
+</section>
+<section id="story-airport-with-the-highest-average-departure-delay" class="level2">
+<h2 class="anchored" data-anchor-id="story-airport-with-the-highest-average-departure-delay">Story: Airport With the Highest Average Departure Delay</h2>
+<p>The analysis of average departure delays across airports reveals crucial insights into operational efficiency and passenger experience at different locations. By identifying the airport with the highest average departure delay, we can better understand where systemic issues may be occurring and how they impact travelers.</p>
+<p><strong>Task 4:</strong> Find the airport that has the highest average departure delay among all airports. Consider 0 minutes delayfor flights that departed early. Output one line of results: the airport name, code, and average delay.</p>
+<div id="9587124b" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the DataFrame for Task 4</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>task4_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Airport_Name</th>
+<th data-quarto-table-cell-role="th">Airport_Code</th>
+<th data-quarto-table-cell-role="th">Average_delay</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Santa Maria, CA: Santa Maria Public/Capt. G. A...</td>
+<td>SMX</td>
+<td>60</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="c3fa877c" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot task 4 results with bar chart</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">5</span>))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.barplot(</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>task4_df,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"Airport_Code"</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"Average_delay"</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"#4c72b0"</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    edgecolor<span class="op">=</span><span class="st">"black"</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Airport with Highest Average Departure Delay"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Airport Code"</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Average Delay (minutes)"</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Add value label at end of bar</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> p <span class="kw">in</span> ax.patches:</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    height <span class="op">=</span> p.get_height()</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    ax.text(</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>        p.get_x() <span class="op">+</span> p.get_width() <span class="op">/</span> <span class="dv">2</span>,</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>        height <span class="op">+</span> <span class="fl">0.5</span>,</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>height<span class="sc">:.0f}</span><span class="ss"> min"</span>,</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>        ha<span class="op">=</span><span class="st">"center"</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>sns.despine(left<span class="op">=</span><span class="va">True</span>, bottom<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Mini_Project_files/figure-html/cell-11-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Key Insight</strong>: Santa Maria Public/Capt.&nbsp;G. Allan Hancock Field (SMX) records the highest average departure delay at 60 minutes from the plotted graph. despite being a smaller regional airport with lower traffic volume compared to major hubs. This suggests that its delays are not driven by congestion but instead reflect local operational constraints. Smaller airports often face constraints such as limited gate space, fewer available staff, or shortages in key equipment. All of which can slow down routine processes like boarding, baggage handling, or aircraft turnaround. SMX may also be more sensitive to weather conditions due to its location at the Central California region. Any disruption, from fog, winds, or visibility issues, can have a larger impact because there are fewer alternative resources on standby. Additionally, performance at smaller airports can fluctuate more widely, as even a delayed routes can significantly raise the average delay. In contrast, major hubs distribute delays across thousands of daily flights, which keeps their averages more stable and less likely to be influenced by isolated issues.</p>
+<section id="why-this-finding-matters" class="level3">
+<h3 class="anchored" data-anchor-id="why-this-finding-matters">Why This Finding Matters</h3>
+</section>
+</section>
+<section id="for-airport-operations-and-management" class="level2">
+<h2 class="anchored" data-anchor-id="for-airport-operations-and-management">For Airport Operations and Management</h2>
+<p>A persistently high average delay serves as a red flag and a warning signal that deeper structural or logistical issues may be affecting SMX’s performance. When delays happens this frequently, they point to underlying inefficiencies such as how flights are handled on the ground, how schedules are managed, or how resources are allocated. These issues would ultimately diminish the passenger satisfaction. Addressing these problems can improve day-to-day performance and create a more stable and predictable schedule for both airlines and passengers.</p>
+</section>
+<section id="for-airlines-serving-smx" class="level2">
+<h2 class="anchored" data-anchor-id="for-airlines-serving-smx">For Airlines Serving SMX</h2>
+<p>Airlines may need to re-evaluate on how they manage their operations at this smaller airport. This could involve turnaround procedures, ground handling processes or adjusting scheduled block times so that flight plans can maximize on-time departures. Airlines might also consider collaborating more closely with airport management to improve staffing adequacy at SMX. Because small airports are more sensitive to operational issues, even modest improvements can lead to noticeable gains in overall punctuality.</p>
+</section>
+<section id="for-passengers-2" class="level2">
+<h2 class="anchored" data-anchor-id="for-passengers-2">For Passengers</h2>
+<p>Passengers flying through SMX should be prepared for a higher risk of late departures. Awareness of this pattern helps passengers to plan more effectively, whether being more flexible with their itineraries or allowing extra time for connections. A little foresight can help reduce the stress associated with an airport known for slower departures.</p>
+</section>
+<section id="for-policy-and-infrastructure-planning" class="level2">
+<h2 class="anchored" data-anchor-id="for-policy-and-infrastructure-planning">For Policy and Infrastructure Planning</h2>
+<p>Identifying SMX as an airport with unusually high average delays helps highlight where targeted investments could have a meaningful effect. Small upgrades like expanding gate access, improving ground-service capacity, or adjusting scheduling practices may significantly reduce delays.</p>
+<section id="story-airline-specific-airports-with-the-highest-average-departure-delay" class="level3">
+<h3 class="anchored" data-anchor-id="story-airline-specific-airports-with-the-highest-average-departure-delay">Story: Airline-Specific Airports with the Highest Average Departure Delay</h3>
+<p>For each airline, identifying the airport where it experiences the highest average departure delay reveals problems at the airport level that aren’t visible in broader airline-wide statistics. Instead of looking at overall airline performance, this analysis pinpoints where each airline struggles the most in its network.</p>
+<p><strong>Task 5:</strong> For each airline find an airport where it has the highest average departure delay. Output an airline name, a name of the airport that has the highest average delay, and the value of that average delay.</p>
+<div id="e0ce07bd" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the dataframe for Task 5</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>task5_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Airline_Name</th>
+<th data-quarto-table-cell-role="th">Airport_name</th>
+<th data-quarto-table-cell-role="th">Highest_Average_Delay</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Alaska Airlines Inc.: AS</td>
+<td>Cincinnati, OH: Cincinnati/Northern Kentucky I...</td>
+<td>31.633333</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Allegiant Air: G4</td>
+<td>Chattanooga, TN: Lovell Field</td>
+<td>136.111111</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>American Airlines Inc.: AA</td>
+<td>Asheville, NC: Asheville Regional</td>
+<td>69.635135</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Delta Air Lines Inc.: DL</td>
+<td>Palm Springs, CA: Palm Springs International</td>
+<td>88.333333</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Endeavor Air Inc.: 9E</td>
+<td>Appleton, WI: Appleton International</td>
+<td>60.000000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>Envoy Air: MQ</td>
+<td>Alexandria, LA: Alexandria International</td>
+<td>45.777778</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6</td>
+<td>Frontier Airlines Inc.: F9</td>
+<td>Santa Ana, CA: John Wayne Airport-Orange County</td>
+<td>53.304348</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">7</td>
+<td>Hawaiian Airlines Inc.: HA</td>
+<td>Austin, TX: Austin - Bergstrom International</td>
+<td>58.615385</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">8</td>
+<td>JetBlue Airways: B6</td>
+<td>Burbank, CA: Bob Hope</td>
+<td>91.200000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">9</td>
+<td>PSA Airlines Inc.: OH</td>
+<td>Omaha, NE: Eppley Airfield</td>
+<td>54.346154</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10</td>
+<td>Republic Airline: YX</td>
+<td>Key West, FL: Key West International</td>
+<td>24.192982</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">11</td>
+<td>SkyWest Airlines Inc.: OO</td>
+<td>Norfolk, VA: Norfolk International</td>
+<td>49.913043</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">12</td>
+<td>Southwest Airlines Co.: WN</td>
+<td>Seattle, WA: Seattle/Tacoma International</td>
+<td>18.929329</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">13</td>
+<td>Spirit Air Lines: NK</td>
+<td>Phoenix, AZ: Phoenix Sky Harbor International</td>
+<td>32.065789</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">14</td>
+<td>United Air Lines Inc.: UA</td>
+<td>Aguadilla, PR: Rafael Hernandez</td>
+<td>44.766667</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="c4424c4b" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot task 5 results with dot plot</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>sns.set_theme(style<span class="op">=</span><span class="st">"whitegrid"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by delay </span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> task5_df.sort_values(<span class="st">"Highest_Average_Delay"</span>, ascending<span class="op">=</span><span class="va">True</span>).reset_index(drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the vertical line for each airline</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>plt.hlines(y<span class="op">=</span>df.index, xmin<span class="op">=</span><span class="dv">0</span>, xmax<span class="op">=</span>df[<span class="st">"Highest_Average_Delay"</span>],</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>           color<span class="op">=</span><span class="st">"#4c72b0"</span>, alpha<span class="op">=</span><span class="fl">0.7</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the dots</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>plt.scatter(df[<span class="st">"Highest_Average_Delay"</span>], df.index, </span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>            color<span class="op">=</span><span class="st">"#4c72b0"</span>, s<span class="op">=</span><span class="dv">80</span>)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>plt.yticks(df.index, df[<span class="st">"Airline_Name"</span>])</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Labels</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Highest Average Delay (minutes)"</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Airport with Highest Average Departure Delay for Each Airline"</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Add text labels showing airport and minutes</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, (delay, airport) <span class="kw">in</span> <span class="bu">enumerate</span>(<span class="bu">zip</span>(df[<span class="st">"Highest_Average_Delay"</span>], df[<span class="st">"Airport_name"</span>])):</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    airport_short <span class="op">=</span> textwrap.shorten(airport, width<span class="op">=</span><span class="dv">40</span>, placeholder<span class="op">=</span><span class="st">"..."</span>)</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    plt.text(delay <span class="op">+</span> <span class="dv">2</span>, i,</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>             <span class="ss">f"</span><span class="sc">{</span>delay<span class="sc">:.0f}</span><span class="ss"> min</span><span class="ch">\n</span><span class="sc">{</span>airport_short<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>             va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Mini_Project_files/figure-html/cell-13-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Key Insight</strong>: Allegiant Air has the most severe delay hotspot, as flights operating through Chattanooga, TN (CHA) produces an average delay of 136 minutes, the highest worst airport delay among all airlines. This suggest Allegiant Air encounters ongoing challenges at this airport—possibly due to limited staffing, runway constraints, or local weather conditions that disrupt operations more than elsewhere.</p>
+<p>JetBlue and Delta also face major delay challenges. JetBlue’s operations at Burbank, CA (BUR) show an average delay of 91 minutes, while Delta’s flights at Palm Springs, CA (PSP) face delays averaging 88 minutes. These cases shows that even large, well-equipped airlines can struggle at airports with limited resource. Both Burbank and Palm Springs are relatively small size in terms of airport, the airport layout itself can slow down operations, examples like runways may be shorter, taxi routes can be narrow or indirect, and there may be little room for aircraft to wait when schedules slip. These physical limitations reduce the airport’s ability to absorb unexpected delays, so even a small disruption can escalate quickly.</p>
+<p>Most airlines experience moderate airport delays, typically ranging from about 45 to 70 minutes. Carriers such as American, Endeavor, Hawaiian, PSA, Frontier, and Envoy fall into this category. These delays suggest issues that are noticeable but still manageable. In many cases, the delays may stem from airports where operations run reasonably well but still face occasional slowdowns. These slowdowns could caused by brief hold-ups during aircraft turnaround or uneven staffing levels at certain times of the day. These issues don’t usually cause major system-wide disruptions, but they do create pockets of inefficiency that can be improved with focused attention. When airlines and airport teams tighten coordination in these areas, it often results in fewer cascading schedule problems.</p>
+<p>In contrast, a few airlines operate with small delay hotspots, which indicates their networks are mostly steady and dependable. Republic Airline’s most delayed airport is Key West (EYW), averaging 24 minutes of delay, and Southwest’s most challenging location, Seattle–Tacoma (SEA), shows an average of just 19 minutes. These low values suggest that both carriers have systems that manage disruptions well, allowing them to maintain a lower average delay even when local conditions are less than ideal.</p>
+</section>
+<section id="why-these-findings-matter-2" class="level3">
+<h3 class="anchored" data-anchor-id="why-these-findings-matter-2">Why These Findings Matter</h3>
+</section>
+</section>
+<section id="for-airlines" class="level2">
+<h2 class="anchored" data-anchor-id="for-airlines">For Airlines</h2>
+<p>For airlines, the results show that performance can vary significantly from one airport to another. Identifying the specific airports where each airline struggles the most helps resolve local issues such as crowding during busy seasons, limited gate space, or scheduling practices that do not match the airport’s operational pace. Instead of spreading efforts across their entire network, airlines can focus on the locations that cause the biggest delays and make improvements where they will matter most.</p>
+</section>
+<section id="for-airports-and-regulators" class="level2">
+<h2 class="anchored" data-anchor-id="for-airports-and-regulators">For Airports and Regulators</h2>
+<p>Airports and regulators can also use these insights to prioritize upgrades that would have the greatest effect. At certain locations such as Chattanooga, Burbank, and Palm Springs, on-time performance appears harder to maintain. When an airport creates unusually large delays for even one airline, it suggests that its physical layout, operating procedures, or resource availability might be placing limits on how smoothly flights can move through the system. By making small infrastructure upgrades, these airports could reduce delays not only for a single carrier but for all airlines that depend on them. Since delays at one airport often spread through the broader network, fixing problems at these specific locations can help stabilize performance on a wider scale.</p>
+</section>
+<section id="for-passengers-3" class="level2">
+<h2 class="anchored" data-anchor-id="for-passengers-3">For Passengers</h2>
+<p>Knowing which airports tend to cause long delays for their chosen airline helps set realistic expectations. Travelers can avoid tight layovers at these locations, allow extra time during busy travel seasons, or simply be prepared for possible disruptions. This is particularly useful for passengers flying with airlines like Allegiant or JetBlue, whose delay at certain airports exceed 90 minutes on average. Delays of that length can easily cause missed connections or force major changes to travel plans, so a little awareness can go a long way in reducing stress.</p>
+</section>
+<section id="story-flight-cancelation-reasons-for-each-departure-airport" class="level2">
+<h2 class="anchored" data-anchor-id="story-flight-cancelation-reasons-for-each-departure-airport">Story: Flight Cancelation Reasons for Each Departure Airport</h2>
+<p>Understanding the reasons behind flight cancellations at different departure airports can provide insights for evaluating the reliability of both airlines and airports, as cancellations disrupt schedules far more severely than delays. By identifying the most frequent cancellation reasons for each airport, stakeholders can address specific issues that lead to disruptions.</p>
+<p><strong>Task 6:</strong> Check if your dataset has any canceled flights. If it does, what was the most frequent reason for each departure airport? Output airport name, the most frequent reason, and the number of cancelations for that reason.</p>
+<p>First, for Task 6a, we identify if the dataset has any canceled flights.</p>
+<div id="6e758dfa" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the dataframe for Task 6</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>task6a_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Num_Canceled_flights</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>3499</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>From the results above, we can see that there are 3499 canceled flights in the dataset. This confirms that cancellation analysis is meaningful and that operational disruptions are non-trivial in this dataset. Next, for Task 6b, we find the most frequent reason for cancellations at each departure airport.</p>
+<div id="cfcef94e" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the dataframe for Task 6</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>task6b_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Airport_Name</th>
+<th data-quarto-table-cell-role="th">Reason</th>
+<th data-quarto-table-cell-role="th">Num_Cancelations</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Aguadilla, PR: Rafael Hernandez</td>
+<td>Carrier</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Akron, OH: Akron-Canton Regional</td>
+<td>Weather</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Albany, GA: Southwest Georgia Regional</td>
+<td>Weather</td>
+<td>1</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Albany, NY: Albany International</td>
+<td>Carrier</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Albuquerque, NM: Albuquerque International Sun...</td>
+<td>Carrier</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">185</td>
+<td>West Palm Beach/Palm Beach, FL: Palm Beach Int...</td>
+<td>Weather</td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">186</td>
+<td>West Yellowstone, MT: Yellowstone</td>
+<td>Weather</td>
+<td>1</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">187</td>
+<td>White Plains, NY: Westchester County</td>
+<td>Weather</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">188</td>
+<td>Wilmington, NC: Wilmington International</td>
+<td>Weather</td>
+<td>7</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">189</td>
+<td>Wrangell, AK: Wrangell Airport</td>
+<td>Carrier</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+
+<p>190 rows × 3 columns</p>
+</div>
+</div>
+</div>
+<p>Since there are multiple cancellation reasons across 190 airports, I summarize the results with two visualizations to highlight key patterns. ## Overall cancellations by reason</p>
+<div id="9abcce9d" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># total cancellations per reason</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>reason_totals <span class="op">=</span> (</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    task6b_df</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    .groupby(<span class="st">"Reason"</span>, as_index<span class="op">=</span><span class="va">False</span>)[<span class="st">"Num_Cancelations"</span>]</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">sum</span>()</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.barplot(</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>reason_totals,           </span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"Reason"</span>,</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"Num_Cancelations"</span>,</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    hue<span class="op">=</span><span class="st">"Reason"</span>,</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    palette<span class="op">=</span><span class="st">"Set2"</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="co"># title &amp; labels</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Total Flight Cancellations by Reason"</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Reason"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Number of Cancellations"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>sns.despine(left<span class="op">=</span><span class="va">True</span>, bottom<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="co"># show the count of cancellations by reason</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> p <span class="kw">in</span> ax.patches:</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    height <span class="op">=</span> p.get_height()</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    ax.text(</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>        p.get_x() <span class="op">+</span> <span class="fl">0.2</span> <span class="op">+</span> p.get_width() <span class="op">/</span> <span class="dv">2</span>,</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>        height <span class="op">+</span> <span class="dv">1</span>,</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span><span class="bu">int</span>(height)<span class="sc">:,}</span><span class="ss">"</span>,</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>        ha<span class="op">=</span><span class="st">"center"</span>,</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>        va <span class="op">=</span> <span class="st">"bottom"</span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Mini_Project_files/figure-html/cell-16-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Key Insight</strong>: The bar chart above summarizes cancellations into three primary federally defined categories present in the dataset: Carrier, Weather, and National Air System (NAS). From the plot, 2432 of total flight cancellation reasons are weather-related, accounting for the highest total number of cancellations across all airports. This is expected because weather events, such as thunderstorms, snow, fog, and high winds could affect multiple flights simultaneously. Unlike airline or crew issues, weather cannot be mitigated through staffing or scheduling changes. Weather disruptions often impact entire regions and those delays tend to spread through the network and create bigger slowdowns.</p>
+<p>330 cancellations were caused by carrier-related issues such as aircraft mechanical problems, crew shortages, or internal scheduling breakdowns, which account for the second largest cancellations overall.</p>
+<p>The National Air System (NAS) category only accounts for 52 cancellations. NAS cancellations, which include air traffic control delays, airspace restrictions, routing issues, or system capacity limits, represent the second-largest group. These cancellations point to traffic congestion across the system rather than problems caused by a specific airport or airline. Airports in congested airspace or those dependent on major traffic corridors may experience more NAS-related cancellations.</p>
+</section>
+<section id="top-10-most-cancellation-prone-airports" class="level2">
+<h2 class="anchored" data-anchor-id="top-10-most-cancellation-prone-airports">Top 10 most cancellation-prone airports</h2>
+<div id="eb075ffc" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># total cancellations per airport</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>top10 <span class="op">=</span> (</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    task6b_df</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    .sort_values(<span class="st">"Num_Cancelations"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    .head(<span class="dv">10</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co"># plot top 10 cancellation-prone airports</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> sns.barplot(</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>top10,</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"Num_Cancelations"</span>,</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"Airport_Name"</span>,</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    hue<span class="op">=</span><span class="st">"Reason"</span>,</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    dodge<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    palette<span class="op">=</span><span class="st">"Set2"</span>,</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    orient<span class="op">=</span><span class="st">"h"</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Top 10 Airports by Number of Flight Cancellations"</span>, fontsize<span class="op">=</span><span class="dv">13</span>)</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Number of Cancellations"</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Departure Airport"</span>, fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>sns.despine(left<span class="op">=</span><span class="va">True</span>, bottom<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="co"># add value labels on bars</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> p <span class="kw">in</span> ax.patches:</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>    width <span class="op">=</span> p.get_width()</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> width <span class="op">&gt;</span> <span class="dv">0</span>:        </span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>        ax.text(</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>            width <span class="op">+</span> <span class="dv">5</span>,</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>            p.get_y() <span class="op">+</span> p.get_height() <span class="op">/</span> <span class="dv">2</span>,</span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>            <span class="bu">str</span>(<span class="bu">int</span>(width)),</span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>            va<span class="op">=</span><span class="st">"center"</span></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Mini_Project_files/figure-html/cell-17-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Key Insight</strong>: Charlotte Douglas International Airport (CLT) appears as the airport with the highest number of cancellations in the dataset, reaching 356 in total. Every cancellation at CLT is linked to weather, showing how strongly the airport is affected by the thunderstorms and seasonal storm systems common to the Southeast regions. Because CLT is one of the major transfer-heavy hubs, disruptions here can spread quickly through the national network, making it one of the most impactful locations for weather related cancellations.</p>
+<p>Tampa (TPA) and Atlanta (ATL) also show a high number of weather-based cancellations, with Tampa reporting about 260 and Atlanta 185. Both regions regularly deal with intense storms and tropical weather patterns, which interfere with flight operations throughout the year. Atlanta’s position as one of the busiest airports in the world due to its geography and serving as “Super Hub” for Delta Air Lines. Atlanta is a 2-hour flight from 80% of the U.S. population. This makes it the mathematically perfect transfer point for connecting the East Coast, Midwest, and South. Also, Atlanta unlike other cities like New York or Chicago which split traffic between multiple airports (JFK/LaGuardia or O’Hare/Midway), Atlanta funnels almost all traffic into a single airport.</p>
+<p>Across the dataset, most of the airports with the highest cancellation numbers share a similar profile. Charlotte Douglas International Airport (CLT), Tampa, Atlanta, Asheville, New Orleans, Washington Reagan, Dallas/Fort Worth, Miami, and Fort Myers all report weather as the leading cause. This shows a clear trend that weather is the dominant driver of cancellations, especially at large hubs and airports located in regions with volatile seasonal conditions.</p>
+<p>Newark Liberty International Airport (EWR) stands out as the only airport in the top ten where cancellations are driven primarily by National Airspace System (NAS) constraints rather than weather. Newark operates in one of the most crowded air corridors in the country, with high traffic, limited runway flexibility, and frequent air traffic control restrictions. These conditions make Newark particularly sensitive to system-level bottlenecks, meaning that many of its cancellations are caused by the airspace environment rather than local weather or carrier issues.</p>
+<section id="why-these-findings-matter-3" class="level3">
+<h3 class="anchored" data-anchor-id="why-these-findings-matter-3">Why These Findings Matter</h3>
+</section>
+</section>
+<section id="for-airlines-1" class="level2">
+<h2 class="anchored" data-anchor-id="for-airlines-1">For Airlines</h2>
+<p>Knowing which airports have the highest cancellation rates helps airlines make better operational decisions. When carriers see that certain airports regularly struggle during storms or heavy traffic, they can adjust their schedules to allow more breathing room, position aircraft nearby, or plan maintenance and staffing more carefully. Even though airlines cannot control the weather or national airspace restrictions, improving the parts they can control reduces the number of cancellations that stem from avoidable internal issues.</p>
+</section>
+<section id="for-airports" class="level2">
+<h2 class="anchored" data-anchor-id="for-airports">For Airports</h2>
+<p>Airports that often rank high in cancellations can use these insights to improve their resilience. When weather is a major factor, the airport might need better deicing equipment or strengthening runway operations during low-visibility periods can make a difference. In busier regions, airports may need to work more closely with air-traffic control or adjust how planes use gates during rush hours. These targeted improvements not only protect the airport’s own schedule but also help prevent ripple effects across the national network.</p>
+</section>
+<section id="for-passengers-4" class="level2">
+<h2 class="anchored" data-anchor-id="for-passengers-4">For Passengers</h2>
+<p>Knowing the main reasons behind cancellations helps travelers plan ahead of time. For people traveling through airports with many cancellations like Charlotte, Tampa, Atlanta, or Newark, it helps to plan ahead. Booking longer layovers, choosing flexible travel times, or avoiding tight connections can reduce stress when flying through these locations. Knowing that some airports have more weather issues or heavier traffic helps passengers set realistic expectations, especially during storm season or holiday travel. A little extra planning can make trips much smoother.</p>
+<section id="story-average-number-of-flights-over-preceding-3-days" class="level3">
+<h3 class="anchored" data-anchor-id="story-average-number-of-flights-over-preceding-3-days">Story: Average Number of Flights Over Preceding 3 Days</h3>
+<p>Air travel activity fluctuates every day, but the raw number of flights often hides the structural patterns that matter most for airlines, airports, and passengers. By examining September 2024 flight volumes and computing the 3-day average of preceding flights, we uncover a narrative about scheduling behavior, weekday–weekend dynamics, and overall operational stability across the air transportation network.</p>
+<p><strong>Task 7:</strong> Build a report that for each day output average number of flights over the preceding 3 days.</p>
+<div id="c786a7a7" class="cell" data-execution_count="17">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the dataframe for Task 7</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>task7_df <span class="op">=</span> task7_df.dropna(subset<span class="op">=</span>[<span class="st">'Avg_Flights_Preceding_3_Days'</span>])</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>task7_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Flight_Date</th>
+<th data-quarto-table-cell-role="th">Day_of_Week</th>
+<th data-quarto-table-cell-role="th">Num_Flights</th>
+<th data-quarto-table-cell-role="th">Avg_Flights_Preceding_3_Days</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">1</td>
+<td>2024-09-02</td>
+<td>Monday</td>
+<td>20661</td>
+<td>17780.0000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2</td>
+<td>2024-09-03</td>
+<td>Tuesday</td>
+<td>18250</td>
+<td>19220.5000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">3</td>
+<td>2024-09-04</td>
+<td>Wednesday</td>
+<td>17631</td>
+<td>18897.0000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">4</td>
+<td>2024-09-05</td>
+<td>Thursday</td>
+<td>19895</td>
+<td>18847.3333</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">5</td>
+<td>2024-09-06</td>
+<td>Friday</td>
+<td>20106</td>
+<td>18592.0000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">6</td>
+<td>2024-09-07</td>
+<td>Saturday</td>
+<td>16663</td>
+<td>19210.6667</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">7</td>
+<td>2024-09-08</td>
+<td>Sunday</td>
+<td>20892</td>
+<td>18888.0000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">8</td>
+<td>2024-09-09</td>
+<td>Monday</td>
+<td>20747</td>
+<td>19220.3333</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">9</td>
+<td>2024-09-10</td>
+<td>Tuesday</td>
+<td>18005</td>
+<td>19434.0000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">10</td>
+<td>2024-09-11</td>
+<td>Wednesday</td>
+<td>18184</td>
+<td>19881.3333</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">11</td>
+<td>2024-09-12</td>
+<td>Thursday</td>
+<td>20920</td>
+<td>18978.6667</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">12</td>
+<td>2024-09-13</td>
+<td>Friday</td>
+<td>20807</td>
+<td>19036.3333</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">13</td>
+<td>2024-09-14</td>
+<td>Saturday</td>
+<td>16859</td>
+<td>19970.3333</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">14</td>
+<td>2024-09-15</td>
+<td>Sunday</td>
+<td>20994</td>
+<td>19528.6667</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">15</td>
+<td>2024-09-16</td>
+<td>Monday</td>
+<td>20744</td>
+<td>19553.3333</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">16</td>
+<td>2024-09-17</td>
+<td>Tuesday</td>
+<td>17985</td>
+<td>19532.3333</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">17</td>
+<td>2024-09-18</td>
+<td>Wednesday</td>
+<td>18175</td>
+<td>19907.6667</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">18</td>
+<td>2024-09-19</td>
+<td>Thursday</td>
+<td>20908</td>
+<td>18968.0000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">19</td>
+<td>2024-09-20</td>
+<td>Friday</td>
+<td>20778</td>
+<td>19022.6667</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">20</td>
+<td>2024-09-21</td>
+<td>Saturday</td>
+<td>16846</td>
+<td>19953.6667</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">21</td>
+<td>2024-09-22</td>
+<td>Sunday</td>
+<td>21000</td>
+<td>19510.6667</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">22</td>
+<td>2024-09-23</td>
+<td>Monday</td>
+<td>20734</td>
+<td>19541.3333</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">23</td>
+<td>2024-09-24</td>
+<td>Tuesday</td>
+<td>17974</td>
+<td>19526.6667</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">24</td>
+<td>2024-09-25</td>
+<td>Wednesday</td>
+<td>18196</td>
+<td>19902.6667</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">25</td>
+<td>2024-09-26</td>
+<td>Thursday</td>
+<td>21023</td>
+<td>18968.0000</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">26</td>
+<td>2024-09-27</td>
+<td>Friday</td>
+<td>20890</td>
+<td>19064.3333</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">27</td>
+<td>2024-09-28</td>
+<td>Saturday</td>
+<td>17019</td>
+<td>20036.3333</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">28</td>
+<td>2024-09-29</td>
+<td>Sunday</td>
+<td>21105</td>
+<td>19644.0000</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">29</td>
+<td>2024-09-30</td>
+<td>Monday</td>
+<td>20851</td>
+<td>19671.3333</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="11cba61c" class="cell" data-execution_count="18">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot task 7 results with line plot</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>plt.plot(</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    task7_df[<span class="st">'Flight_Date'</span>],</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    task7_df[<span class="st">'Avg_Flights_Preceding_3_Days'</span>],</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    marker<span class="op">=</span><span class="st">'o'</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">'#4c72b0'</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co"># title &amp; labels</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Average Number of Flights Over Preceding 3 Days (September 2024)'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Date'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Average Number of Flights'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>plt.grid(axis<span class="op">=</span><span class="st">'y'</span>)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="co"># add value labels on points</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, value <span class="kw">in</span> <span class="bu">enumerate</span>(task7_df[<span class="st">'Avg_Flights_Preceding_3_Days'</span>]):</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    plt.text(i, value <span class="op">+</span> <span class="dv">200</span>, <span class="ss">f"</span><span class="sc">{</span><span class="bu">int</span>(value)<span class="sc">:,}</span><span class="ss">"</span>, va<span class="op">=</span><span class="st">'center'</span>, fontsize<span class="op">=</span><span class="dv">8</span>)</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Mini_Project_files/figure-html/cell-19-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Key Insight</strong>: From the above line plot, which shows the 3-day preceding average. Early in the month, the moving average is lower because the plot start with September 2, thus fewer than three preceding days exist. After the first few days, the moving average stabilizes into a broad but consistent band between 18,800 and 20,000 flights, reflecting steady operational activity across most of September. Even though individual days experience dips, particularly on Saturdays, the effect on the moving average is slight and temporary, indicating a resilient and balanced system. The line shows oscillations that mirror the weekly rhythm from September 10 to September 28. The average dips slightly following low-traffic Saturdays and rises again after the high volumes that typically occur on Sundays and Mondays. The highest point in the trend line reaches just above 20,000 flights on September 27 (Friday), indicating a period of particularly strong three-day demand. These patterns confirm that overall flight activity in September 2024 was consistent and highly regular, with no evidence of major disruptions such as severe weather events or operational breakdowns.</p>
+<div id="18413cba" class="cell" data-execution_count="19">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot task 7 results with bar plot and overlaid line plot</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>fig, ax1 <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))  </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> ax1.twinx()</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>ax1.bar(</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    task7_df[<span class="st">'Flight_Date'</span>],</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    task7_df[<span class="st">'Num_Flights'</span>],</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">'#a0c4ff'</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">'Number of Flights'</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>ax2.plot(</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    task7_df[<span class="st">'Flight_Date'</span>],</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    task7_df[<span class="st">'Avg_Flights_Preceding_3_Days'</span>],</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    marker<span class="op">=</span><span class="st">'o'</span>,</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">'#4c72b0'</span>,</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">'Avg Flights Preceding 3 Days'</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>) </span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="co"># title &amp; labels</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>ax1.set_title(<span class="st">'Daily Number of Flights and 3-Day Preceding Average (September 2024)'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>ax1.set_xlabel(<span class="st">'Date'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>ax1.set_ylabel(<span class="st">'Number of Flights'</span>, fontsize<span class="op">=</span><span class="dv">12</span>, color<span class="op">=</span><span class="st">'#a0c4ff'</span>)</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>ax2.set_ylabel(<span class="st">'Avg Flights Preceding 3 Days'</span>, fontsize<span class="op">=</span><span class="dv">12</span>, color<span class="op">=</span><span class="st">'#4c72b0'</span>)</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>ax1.tick_params(axis<span class="op">=</span><span class="st">'y'</span>, labelcolor<span class="op">=</span><span class="st">'#a0c4ff'</span>)</span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>ax2.tick_params(axis<span class="op">=</span><span class="st">'y'</span>, labelcolor<span class="op">=</span><span class="st">'#4c72b0'</span>)</span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>ax1.set_xticklabels(task7_df[<span class="st">'Flight_Date'</span>], rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>ax1.grid(axis<span class="op">=</span><span class="st">'y'</span>)  </span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>/var/folders/ds/60p0sjyd6xj_gxb1bv0wknv00000gn/T/ipykernel_42948/3875979242.py:24: UserWarning:
+
+set_ticklabels() should only be used with a fixed number of ticks, i.e. after set_ticks() or using a FixedLocator.
+</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Mini_Project_files/figure-html/cell-20-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Key Insight</strong>:</p>
+<p>The bar plot which overlays daily flight counts with a 3-day preceding moving average, reveals a strong and recurring weekly rhythm in flight activity throughout September 2024. The height of the bars shows that Sundays and Mondays consistently record the highest numbers of flights, while Tuesdays, Wednesdays, and Thursdays generally dip to the lower end of the 18,800–19,600 range. These reductions correspond to the quieter mid-week travel period when both leisure and business travel typically soften. The average then rises again toward the weekend before dropping sharply for Saturdays, which experience drops in volume. This weekly structure appears throughout the month, indicating a highly regular pattern in air-travel demand. The moving-average line provides a useful comparison by filtering out day-to-day noise.</p>
+<p>Together, the two visualizations tell a clear story that individual days may rise and fall in flight volume, but the underlying demand for air travel during this period is steady and cyclical.</p>
+</section>
+<section id="why-these-findings-matter-4" class="level3">
+<h3 class="anchored" data-anchor-id="why-these-findings-matter-4">Why These Findings Matter</h3>
+</section>
+</section>
+<section id="for-airlines-2" class="level2">
+<h2 class="anchored" data-anchor-id="for-airlines-2">For Airlines</h2>
+<p>Recognizing that mid-week flights are consistently lower helps airlines plan their operations more smoothly. With fewer passengers and fewer flights on these days, carriers have more flexibility to organize staff schedules and handle routine maintenance without putting extra pressure on the system. Conversely, the regular spikes on Sundays and Mondays signal times where additional staff, gate availability, and turnaround resources are needed to prevent delays and congestion. These insights also influence pricing strategies, where airlines often adjust ticket prices dynamically based on expected load factors, meaning passengers traveling on mid-week days may find lower fares, while tickets for Sundays and Mondays are often more expensive since demand is higher.</p>
+</section>
+<section id="for-passengers-5" class="level2">
+<h2 class="anchored" data-anchor-id="for-passengers-5">For Passengers</h2>
+<p>From the passenger perspective, knowing when flight volumes rise or fall can make travel planning much easier to avoid crowded airports, minimize the risk of delays, or secure lower price tickets. In contrast, knowing when airports are busier helps people plan ahead, arrive early, or avoid tight connections. Ultimately, these trends reflect the broader rhythm of travel behavior, and making them visible through data empowers both airlines and travelers to make smarter decisions.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
